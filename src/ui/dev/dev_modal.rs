@@ -11,7 +11,6 @@ use bevy::{
 };
 use bevy_eventlistener::{callbacks::ListenerMut, event_listener::On};
 use bevy_mod_picking::events::{Click, Pointer};
-use core_library::authentication::client_authentication::RefreshAccessTokenEvent;
 
 use crate::ui::{
     colors::CurrentColors,
@@ -55,19 +54,7 @@ pub fn setup_dev_modal(mut commands: Commands, colors: Res<CurrentColors>) {
         text: "Refresh Access Token".to_string(),
         font_size: 40.0,
     };
-    let button = basic_button(
-        On::<Pointer<Click>>::run(
-            |mut event: ListenerMut<Pointer<Click>>,
-             mut refresh_token: EventWriter<RefreshAccessTokenEvent>| {
-                event.stop_propagation();
-                refresh_token.send(RefreshAccessTokenEvent);
-            },
-        ),
-        button_style,
-        &mut commands,
-        &colors,
-    );
 
-    commands.entity(button_container).push_children(&[button]);
+    commands.entity(button_container).push_children(&[]);
     commands.entity(modal).push_children(&[button_container]);
 }

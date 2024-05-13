@@ -14,8 +14,8 @@ impl InputDefaultsTrait for CoreActions {
     fn default_input_codes() -> InputMap<Self::Action> {
         let mut input_map = InputMap::default();
         input_map.insert_chord(
-            [KeyCode::AltRight, KeyCode::Grave],
             CoreActions::ToggleDevMode,
+            [KeyCode::AltRight, KeyCode::Backquote],
         );
         input_map
     }

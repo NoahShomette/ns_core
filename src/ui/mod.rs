@@ -1,10 +1,11 @@
 use std::marker::PhantomData;
 
 use bevy::{
-    app::{App, Plugin},
+    app::{App, Plugin, Update},
     ecs::{
         component::Component,
         query::With,
+        schedule::{common_conditions::resource_exists, IntoSystemConfigs},
         system::{IntoSystem, Local, Query, ResMut, Resource, SystemId},
     },
     math::Vec2,
@@ -22,9 +23,9 @@ pub mod dev;
 pub mod scenes;
 pub mod widgets;
 
-pub struct ClientUiPlugin;
+pub struct NsCoreUiPlugin;
 
-impl Plugin for ClientUiPlugin {
+impl Plugin for NsCoreUiPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.init_resource::<UiSystemIdResource>();
         app.add_plugins(TextInputPlugin);
@@ -35,12 +36,15 @@ impl Plugin for ClientUiPlugin {
             use self::dev::DevModePlugin;
             app.add_plugins(DevModePlugin);
         }
-        //app.add_systems(Update, scale);
+        app.add_systems(Update, scale.run_if(resource_exists::<ScaleUi>));
     }
 }
 
 pub const UI_SCREEN_LAYER: i32 = 1;
 pub const UI_MODAL_LAYER: i32 = 100;
+
+#[derive(Resource, Default)]
+pub struct ScaleUi;
 
 #[derive(Resource, Default)]
 pub struct UiSystemIdResource {
@@ -89,7 +93,7 @@ pub fn scale(
 
     let scale_h = ww / 1920.0;
     let scale_w = wh / 1080.0;
-    ui_scale.0 = scale_h.min(scale_w) as f64;
+    ui_scale.0 = scale_h.min(scale_w);
 }
 
 /// Helper function to make creating [`MarkerComponent`] function type helpers easier

@@ -21,7 +21,7 @@ impl InputDefaultsTrait for DevActions {
     type Action = DevActions;
 
     fn default_input_codes() -> InputMap<Self::Action> {
-        InputMap::new([(KeyCode::Grave, DevActions::OpenDevModal)])
+        InputMap::new([(DevActions::OpenDevModal, KeyCode::Backquote)])
     }
 }
 
@@ -35,7 +35,7 @@ pub fn dev_actions(
         return;
     };
 
-    if actions.just_pressed(DevActions::OpenDevModal) {
+    if actions.just_pressed(&DevActions::OpenDevModal) {
         if !dev_modal_query.is_empty() {
             return;
         }

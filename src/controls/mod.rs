@@ -19,9 +19,10 @@ use self::core_actions::CoreActions;
 
 pub mod core_actions;
 
-pub struct ControlsPlugin;
+/// Core actions plugin
+pub struct ActionsPlugin;
 
-impl Plugin for ControlsPlugin {
+impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
         app.setup_action::<CoreActions>(true);
         app.add_systems(Startup, setup_client_controller);

@@ -78,7 +78,7 @@ fn send_scroll_events(
                     x: mouse_wheel_event.x,
                     y: mouse_wheel_event.y,
                     scroll_amount: mouse_wheel_event.unit,
-                })
+                });
             }
         }
     }
