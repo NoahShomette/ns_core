@@ -1,34 +1,44 @@
 use bevy::{app::Plugin, ecs::system::Resource, render::color::Color};
 
-pub struct GameColorsPlugin;
+pub struct GameColorsPlugin {
+    pub custom_colors: Option<CurrentColors>,
+}
 
 impl Plugin for GameColorsPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
-        app.init_resource::<CurrentColors>();
+        if let Some(custom_colors) = self.custom_colors {
+            app.insert_resource(custom_colors);
+        } else {
+            app.init_resource::<CurrentColors>();
+        }
     }
 }
 
-#[derive(Resource, Default)]
+#[derive(Resource, Default, Clone, Copy)]
 pub struct CurrentColors(GameColorPalette);
 
 impl CurrentColors {
+    /// Dark colored text
     pub fn dark_text(&self) -> Color {
         self.0.dark_text()
     }
+    /// Light colored text
     pub fn light_text(&self) -> Color {
         self.0.light_text()
     }
+    /// A standard background color
     pub fn background(&self) -> Color {
         self.0.background()
     }
+    /// A dark colored background color
     pub fn background_dark(&self) -> Color {
         self.0.background_dark()
     }
+    /// A light colored background color
     pub fn background_light(&self) -> Color {
         self.0.background_light()
     }
-
-    /// An accent color that is alternatively used with highlight in order to direct attention
+    /// An accent color that is alternatively used with highlight in order to direct attention. Should not by itself denote interactivity but should accent the ui
     pub fn accent(&self) -> Color {
         self.0.accent()
     }
@@ -42,20 +52,16 @@ impl CurrentColors {
     }
 }
 
-pub const MODAL_TEXT: Color = Color::rgb(0.12, 0.15, 0.10);
-pub const MODAL_BACKGROUND: Color = Color::rgb(0.79, 0.72, 0.65);
-pub const MODAL_ALTERNATE: Color = Color::rgb(0.69, 0.62, 0.55);
-pub const LIGHT_PURLE: Color = Color::rgb(0.50, 0.45, 0.60);
-
+#[derive(Resource, Clone, Copy)]
 pub struct GameColorPalette {
-    dark_text: Color,
-    light_text: Color,
-    background: Color,
-    background_light: Color,
-    background_dark: Color,
-    accent: Color,
-    highlight: Color,
-    interactive: Color,
+    pub dark_text: Color,
+    pub light_text: Color,
+    pub background: Color,
+    pub background_light: Color,
+    pub background_dark: Color,
+    pub accent: Color,
+    pub highlight: Color,
+    pub interactive: Color,
 }
 
 impl Default for GameColorPalette {

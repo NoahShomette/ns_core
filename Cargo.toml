@@ -11,3 +11,4 @@ leafwing-input-manager = { version = "0.13.3" }
 bevy_simple_text_input = { version = "0.7.0" }
 bevy_eventlistener = { version = "0.7.0" }
 bevy_mod_picking = { version = "0.18.2" }
+serde = { version = "1.0.202" }

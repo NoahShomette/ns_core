@@ -1,9 +1,8 @@
 //! Scenes are essentially distinct Ui modes.
 //!
-//! For now we really just have two and then theres substates in those.
-//!
-//! - Main Menu
-//! - Game
+//! They represent a logical point in the app delineated by the state fed into it where you want the given ui to be displayed.
+//! Internally the plugin will manage spawning and despawning the scene and all the components marked with the given marker componet
+//! from the app when the scene is entered or left
 
 use bevy::{
     app::App,
@@ -18,7 +17,7 @@ use bevy::{
     reflect::TypePath,
 };
 
-use super::{MarkerComponent, UiSystemIdResource};
+use crate::one_shot_system::{MarkerComponent, OneShotSystemIds};
 
 pub trait ScenesAppExtension {
     /// Adds a new scene that will run the setup system every time the given state is entered and a cleanup system every time it leaves.
@@ -38,7 +37,7 @@ impl ScenesAppExtension for App {
         states: impl States,
     ) {
         let system_id = self.world.register_system(setup_system);
-        let mut resource = self.world.resource_mut::<UiSystemIdResource>();
+        let mut resource = self.world.resource_mut::<OneShotSystemIds>();
         resource.map.insert(Marker::type_path(), system_id);
         self.add_systems(OnEnter(states.clone()), setup_scene::<Marker>);
         self.add_systems(OnExit(states), cleanup_scene::<Marker>);
@@ -47,7 +46,7 @@ impl ScenesAppExtension for App {
 
 fn setup_scene<SceneRootMarker: Component + TypePath>(
     mut commands: Commands,
-    resource: Res<UiSystemIdResource>,
+    resource: Res<OneShotSystemIds>,
 ) {
     let system_id = resource.map.get(SceneRootMarker::type_path()).unwrap();
     commands.run_system(*system_id);

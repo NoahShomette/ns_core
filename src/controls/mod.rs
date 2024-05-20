@@ -1,47 +1,63 @@
-use std::marker::PhantomData;
+//! # Example
+//! ```rust
+//!
+//! // In the app build system
+//!     app.setup_action::<CoreActions>(true);
+//!
+//! // Spawning your controls
+//! pub fn setup_client_controller(mut commands: Commands) {
+//!     commands.spawn((
+//!         ClientController,
+//!         InputManagerBundle {
+//!             action_state: Default::default(),
+//!             input_map: CoreActions::default_input_codes(),
+//!         },
+//!     ));
+//! }
+//! ```
+//!
+//! # Example of setting up your own actions for use
+//! ```rust
+//! #[derive(Actionlike, PartialEq, Eq, Hash, Clone, Copy, Debug, Reflect)]
+//! pub enum CoreActions {
+//!    ToggleDevMode,
+//! }
+//!
+//! impl InputDefaultsTrait for CoreActions {
+//!    type Action = CoreActions;
+//!
+//!    fn default_input_codes() -> InputMap<Self::Action> {
+//!        let mut input_map = InputMap::default();
+//!        input_map.insert_chord(
+//!            CoreActions::ToggleDevMode,
+//!            [KeyCode::AltRight, KeyCode::Backquote],
+//!        );
+//!        input_map
+//!    }
+//!}
+//!
+//! ```
 
 use bevy::{
-    app::{App, Plugin, Startup, Update},
+    app::{App, Update},
     ecs::{
         component::Component,
         event::{Event, EventReader},
         system::Commands,
     },
-    reflect::TypePath,
+    reflect::{Reflect, TypePath},
 };
 use leafwing_input_manager::{
     input_map::InputMap,
     plugin::{InputManagerPlugin, ToggleActions},
-    Actionlike, InputManagerBundle,
+    Actionlike,
 };
-
-use self::core_actions::CoreActions;
-
-pub mod core_actions;
-
-/// Core actions plugin
-pub struct ActionsPlugin;
-
-impl Plugin for ActionsPlugin {
-    fn build(&self, app: &mut bevy::prelude::App) {
-        app.setup_action::<CoreActions>(true);
-        app.add_systems(Startup, setup_client_controller);
-    }
-}
+use serde::{Deserialize, Serialize};
+use std::marker::PhantomData;
 
 /// A marker component for the clients controller entity
-#[derive(Component)]
+#[derive(Component, Reflect, Serialize, Deserialize)]
 pub struct ClientController;
-
-pub fn setup_client_controller(mut commands: Commands) {
-    commands.spawn((
-        ClientController,
-        InputManagerBundle {
-            action_state: Default::default(),
-            input_map: CoreActions::default_input_codes(),
-        },
-    ));
-}
 
 /// An event that will enable the given action
 #[derive(Event)]
@@ -49,7 +65,8 @@ pub struct EnableActionsEvent<A: Actionlike> {
     action_to_enable: PhantomData<A>,
 }
 
-fn enable_actions<A: Actionlike>(
+/// A system that enables the given action when an [`EnableActionsEvent<Action>`] is received
+fn enable_action<A: Actionlike>(
     mut event_reader: EventReader<EnableActionsEvent<A>>,
     mut commands: Commands,
 ) {
@@ -64,7 +81,7 @@ pub struct DisableActionsEvent<A: Actionlike> {
     action_to_disable: PhantomData<A>,
 }
 
-fn disable_actions<A: Actionlike>(
+fn disable_action<A: Actionlike>(
     mut event_reader: EventReader<DisableActionsEvent<A>>,
     mut commands: Commands,
 ) {
@@ -87,12 +104,13 @@ impl ActionBusyworkTrait for App {
         }
         self.add_event::<EnableActionsEvent<A>>()
             .add_event::<DisableActionsEvent<A>>();
-        self.add_systems(Update, (disable_actions::<A>, enable_actions::<A>));
+        self.add_systems(Update, (disable_action::<A>, enable_action::<A>));
 
         self.add_plugins(InputManagerPlugin::<A>::default());
     }
 }
 
+/// A helper trait used to help when spawning Input Maps
 pub trait InputDefaultsTrait {
     type Action: Actionlike + TypePath;
     fn default_input_codes() -> InputMap<Self::Action>;
