@@ -15,7 +15,7 @@ impl Plugin for GameColorsPlugin {
 }
 
 #[derive(Resource, Default, Clone, Copy)]
-pub struct CurrentColors(GameColorPalette);
+pub struct CurrentColors(pub GameColorPalette);
 
 impl CurrentColors {
     /// Dark colored text
