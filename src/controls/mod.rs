@@ -60,7 +60,7 @@ use std::marker::PhantomData;
 pub struct ClientController;
 
 /// An event that will enable the given action
-#[derive(Event)]
+#[derive(Event, Default)]
 pub struct EnableActionsEvent<A: Actionlike> {
     action_to_enable: PhantomData<A>,
 }
@@ -76,7 +76,7 @@ fn enable_action<A: Actionlike>(
 }
 
 /// An event that will disable the given action
-#[derive(Event)]
+#[derive(Event, Default)]
 pub struct DisableActionsEvent<A: Actionlike> {
     action_to_disable: PhantomData<A>,
 }
