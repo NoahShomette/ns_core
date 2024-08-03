@@ -1,4 +1,4 @@
-use bevy::{app::Plugin, ecs::system::Resource, render::color::Color};
+use bevy::{app::Plugin, color::{Color, Srgba}, ecs::system::Resource};
 
 pub struct GameColorsPlugin {
     pub custom_colors: Option<CurrentColors>,
@@ -73,14 +73,14 @@ impl Default for GameColorPalette {
 impl GameColorPalette {
     pub fn dark() -> GameColorPalette {
         Self {
-            dark_text: Color::rgb(0.12, 0.15, 0.10),
-            light_text: Color::hex("#DAC4AF").unwrap(),
-            background: Color::hex("#474340").unwrap(),
-            background_light: Color::hex("#988E84").unwrap(),
-            background_dark: Color::hex("#6F5A44").unwrap(),
-            accent: Color::hex("#F3E9C6").unwrap(),
-            highlight: Color::hex("33476C").unwrap(), //Color::rgb(0.07, 0.36, 0.62),
-            interactive: Color::hex("#8E5D5D").unwrap(),
+            dark_text: Color::srgb(0.12, 0.15, 0.10),
+            light_text: Srgba::hex("#DAC4AF").unwrap().into(),
+            background: Srgba::hex("#474340").unwrap().into(),
+            background_light: Srgba::hex("#988E84").unwrap().into(),
+            background_dark: Srgba::hex("#6F5A44").unwrap().into(),
+            accent: Srgba::hex("#F3E9C6").unwrap().into(),
+            highlight: Srgba::hex("33476C").unwrap().into(), //Color::rgb(0.07, 0.36, 0.62),
+            interactive: Srgba::hex("#8E5D5D").unwrap().into(),
         }
     }
 
@@ -92,7 +92,7 @@ impl GameColorPalette {
             background_light: Default::default(),
             background_dark: Default::default(),
             accent: Default::default(),
-            highlight: Color::rgb(0.07, 0.36, 0.62),
+            highlight: Color::srgb(0.07, 0.36, 0.62),
             interactive: Default::default(),
         }
     }

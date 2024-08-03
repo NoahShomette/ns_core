@@ -5,16 +5,12 @@
 //! from the app when the scene is entered or left
 
 use bevy::{
-    app::App,
-    ecs::{
+    app::App, ecs::{
         component::Component,
         entity::Entity,
         query::With,
-        schedule::{OnEnter, OnExit, States},
         system::{Commands, IntoSystem, Query, Res},
-    },
-    hierarchy::DespawnRecursiveExt,
-    reflect::TypePath,
+    }, hierarchy::DespawnRecursiveExt, prelude::{OnEnter, OnExit, States}, reflect::TypePath
 };
 
 use crate::one_shot_system::{MarkerComponent, OneShotSystemIds};
@@ -36,8 +32,8 @@ impl ScenesAppExtension for App {
         setup_system: impl IntoSystem<(), (), M> + 'static,
         states: impl States,
     ) {
-        let system_id = self.world.register_system(setup_system);
-        let mut resource = self.world.resource_mut::<OneShotSystemIds>();
+        let system_id = self.world_mut().register_system(setup_system);
+        let mut resource = self.world_mut().resource_mut::<OneShotSystemIds>();
         resource.map.insert(Marker::type_path(), system_id);
         self.add_systems(OnEnter(states.clone()), setup_scene::<Marker>);
         self.add_systems(OnExit(states), cleanup_scene::<Marker>);

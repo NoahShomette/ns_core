@@ -1,22 +1,16 @@
 use bevy::{
-    app::{Plugin, Update},
-    ecs::{
+    app::{Plugin, Update}, color::{Alpha, Color}, ecs::{
         bundle::Bundle,
         component::Component,
         entity::Entity,
         query::{Changed, With},
         system::{Commands, Query},
-    },
-    hierarchy::{BuildChildren, DespawnRecursiveExt},
-    prelude::default,
-    render::color::Color,
-    text::TextStyle,
-    ui::{
+    }, hierarchy::{BuildChildren, DespawnRecursiveExt}, prelude::default, text::TextStyle, ui::{
         node_bundles::{ButtonBundle, NodeBundle, TextBundle},
         widget::Button,
         AlignItems, BackgroundColor, FlexDirection, FocusPolicy, Interaction, JustifyContent,
         PositionType, Style, UiRect, Val,
-    },
+    }
 };
 
 use crate::ui::{colors::CurrentColors, UI_MODAL_LAYER};
@@ -100,7 +94,7 @@ where
                 position_type: PositionType::Absolute,
                 ..default()
             },
-            background_color: Color::BLACK.with_a(0.5).into(),
+            background_color: Color::BLACK.with_alpha(0.5).into(),
             focus_policy: FocusPolicy::Block,
             z_index: bevy::ui::ZIndex::Global(UI_MODAL_LAYER),
             ..default()
@@ -148,7 +142,7 @@ where
                     flex_direction: FlexDirection::Row,
                     ..default()
                 },
-                background_color: Color::rgba(0.0, 0.0, 0.0, 0.0).into(),
+                background_color: Color::srgba(0.0, 0.0, 0.0, 0.0).into(),
                 ..default()
             })
             .with_children(|parent| {
@@ -206,7 +200,7 @@ where
                 flex_direction: FlexDirection::Column,
                 ..default()
             },
-            background_color: Color::rgba(0.0, 0.0, 0.0, 0.0).into(),
+            background_color: Color::srgba(0.0, 0.0, 0.0, 0.0).into(),
             ..default()
         })
         .id();

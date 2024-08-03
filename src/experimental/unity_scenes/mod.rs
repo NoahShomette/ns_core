@@ -1,14 +1,6 @@
 //! An experimental state management system that is intended to automatically handle meta states.
 
-use std::marker::PhantomData;
-
-use bevy::{
-    app::Plugin,
-    ecs::{
-        component::Component,
-        schedule::{OnExit, States},
-    },
-};
+use bevy::{app::Plugin, ecs::component::Component, prelude::States};
 
 pub struct UnityScenePlugin<State: States> {
     state: State,

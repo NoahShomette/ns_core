@@ -41,8 +41,8 @@ impl OneShotSystemAppExtension for App {
 
         system: impl IntoSystem<(), (), M> + 'static,
     ) {
-        let system_id = self.world.register_system(system);
-        let mut resource = self.world.resource_mut::<OneShotSystemIds>();
+        let system_id = self.world_mut().register_system(system);
+        let mut resource = self.world_mut().resource_mut::<OneShotSystemIds>();
         resource.map.insert(Marker::type_path(), system_id);
     }
 }
